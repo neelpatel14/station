@@ -1,0 +1,27 @@
+- name: Install EFL
+  dnf:
+    name: efl
+    state: latest
+
+- name: Install gcc cpp
+  dnf:
+    name: gcc,cpp
+    state: latest
+
+- name: Install Enlightenment
+  dnf:
+    name: enlightenment
+    state: present
+
+- name: Remove Openbox
+  yum:
+    name: ['openbox', 'openbox-libs']
+    state: absent
+
+- name: Openbox Remove 
+  file:
+    path: /usr/share/xsessions/openbox.desktop
+    state: absent
+
+- name: Set default target
+  command: systemctl set-default graphical.target

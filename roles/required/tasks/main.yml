@@ -1,0 +1,67 @@
+# - name: Disable SELinux
+#   command: setenforce 0
+
+- name: Install firewalld
+  dnf: 
+    name: firewalld
+
+- name: Firewall 
+  service: 
+    name: firewalld
+    state: started 
+    enabled: true
+
+- name: Install EPEL Repo
+  dnf: 
+    name: passenger
+
+- name: Create local user acccount
+  group: 
+    name: "{{ local_username }}"
+  
+- name: Create User 
+  user: 
+    name: "{{ local_username}}"
+    group: "{{ local_username }}"
+    groups: wheel
+
+- name: SSH File 
+  file: 
+    path: /home/{{ local_username }}/.ssh 
+    state: directory 
+    owner: "{{ local_username }}"
+    group: "{{ local_username }}" 
+    mode: 0700 
+
+- name: Time
+  lineinfile:
+    line: export HISTTIMEFORMAT="%h/%d - %H:%M:%S "
+    path: /home/{{ local_username }}/.bashrc
+
+- command: cp /home/vagrant/.ssh/authorized_keys /home/{{ local_username }}/.ssh
+
+- name: Autorized Keys 
+  file: 
+    path: /home/{{ local_username }}/.ssh/authorized_keys
+    owner: "{{ local_username }}"
+    group: "{{ local_username }}"
+    mode: 0600 
+
+- name: Sudoers
+  template: 
+    src: local.sudoers
+    dest: /etc/sudoers.d/local
+
+# Install only last 2 kernel packages
+- name: DNF Conf 
+  lineinfile:
+    line: "installonly_limit=2"
+    path: /etc/dnf/dnf.conf
+
+- name: Install unzip
+  dnf:
+    name: unzip
+
+- name: Install Snap
+  dnf:
+    name: snapd

@@ -1,0 +1,13 @@
+- name: Setup workstation
+  hosts: all, localhost
+  become: yes
+
+  vars_files:
+    - personalize.yml
+
+  roles:
+    - { role: required, tags: ['required'] }
+    - { role: enlightenment, tags: ['enlightenment']}
+    - { role: vscode, tags: ['vscode'] }
+    - { role: intelliJ, tags: ['intelliJ']}
+    - { role: update, tags: ['update'] }
